@@ -6,6 +6,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from time import sleep
 from selenium.webdriver.support.wait import WebDriverWait
 
+from UserCredential import UserData
+
 
 class MyTestCase(unittest.TestCase):
 
@@ -15,8 +17,6 @@ class MyTestCase(unittest.TestCase):
         cls.driver.implicitly_wait(3)
         cls.driver.maximize_window()
         cls.action = ActionChains(cls.driver)
-        cls.username = 'hunoyan@gmail.com'
-        cls.password = 'tatev0770064092018'
 
 
 
@@ -27,14 +27,15 @@ class MyTestCase(unittest.TestCase):
         self.search()
         self.book()
         self.buy()
+        self.tearDown()
 
     def signup(self):
         self.driver.get('https://www.phptravels.net/signup')
-        self.driver.find_element(By.NAME, 'first_name').send_keys('Tatev')
-        self.driver.find_element(By.NAME, 'last_name').send_keys('Hunoyan')
-        self.driver.find_element(By.NAME, 'phone').send_keys('077006409')
-        self.driver.find_element(By.NAME, 'email').send_keys(self.username)
-        self.driver.find_element(By.NAME, 'password').send_keys(self.password)
+        self.driver.find_element(By.NAME, 'first_name').send_keys(UserData.Name)
+        self.driver.find_element(By.NAME, 'last_name').send_keys(UserData.Surname)
+        self.driver.find_element(By.NAME, 'phone').send_keys(UserData.Phone)
+        self.driver.find_element(By.NAME, 'email').send_keys(UserData.Email)
+        self.driver.find_element(By.NAME, 'password').send_keys(UserData.Password)
         self.action.move_to_element(self.driver.find_element(By.XPATH, '//*[@id="cookie_stop"]')).click().perform()
         self.driver.execute_script("window.scrollTo(0, 300);")
         sleep(5)
@@ -42,8 +43,8 @@ class MyTestCase(unittest.TestCase):
 
     def login(self):
         # print('starting login test')
-        self.driver.find_element(By.NAME, 'email').send_keys(self.username)
-        self.driver.find_element(By.NAME, 'password').send_keys(self.password)
+        self.driver.find_element(By.NAME, 'email').send_keys(UserData.Email)
+        self.driver.find_element(By.NAME, 'password').send_keys(UserData.Password)
         self.driver.implicitly_wait(5)
         url1 = self.driver.current_url
         sleep(2)
@@ -54,17 +55,13 @@ class MyTestCase(unittest.TestCase):
 
     def hotel(self):
         self.driver.implicitly_wait(3)
-        # print('starting hotel test')
         url3 = self.driver.current_url
         self.driver.find_element(By.XPATH, '//*[@id="fadein"]/header/div[2]/div/div/div/div/div[2]/nav/ul/li[2]/a').click()
         sleep(2)
         url4 = self.driver.current_url
         self.assertNotEqual(url3, url4)
-        # print('done')
 
     def search(self):
-        # self.driver.implicitly_wait(3)
-        # print('starting search test')
         self.driver.find_element(By.XPATH, '// *[ @ id = "select2-hotels_city-container"]').click()
         self.driver.find_element(By.XPATH, '// *[ @ id = "fadein"] / span / span / span[1] / input').send_keys('Yerevan')
         sleep(5)
@@ -83,7 +80,6 @@ class MyTestCase(unittest.TestCase):
 
 
     def book(self):
-        # self.driver.implicitly_wait(3)
         sleep(5)
         print('starting book testing')
         self.driver.switch_to.window(self.driver.window_handles[2])
@@ -98,9 +94,9 @@ class MyTestCase(unittest.TestCase):
     def buy(self):
         self.driver.implicitly_wait(3)
         print('starting buy test')
-        self.driver.find_element(By.ID, 'firstName_lastName').send_keys('Tatev Hunoyan')
-        self.driver.find_element(By.ID, 'email').send_keys(self.username)
-        self.driver.find_element(By.ID, 'retypeEmail').send_keys(self.username)
+        self.driver.find_element(By.ID, 'firstName_lastName').send_keys(UserData.Name+' '+UserData.Surname)
+        self.driver.find_element(By.ID, 'email').send_keys(UserData.Email)
+        self.driver.find_element(By.ID, 'retypeEmail').send_keys(UserData.Email)
         self.driver.execute_script("window.scrollTo(0, 3000);")
         self.action.move_to_element(self.driver.find_element(By.XPATH, '//*[@id="SiteContent"]/div/div[1]/div[5]/div/button/div/div')).click().perform()
 
@@ -108,8 +104,8 @@ class MyTestCase(unittest.TestCase):
 
 
 
-    # def tearDown(self):
-    #     self.driver.close()
+    def tearDown(self):
+        self.driver.close()
 
 if __name__ == '__main__':
     unittest.main()
